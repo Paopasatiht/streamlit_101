@@ -56,35 +56,39 @@ if url_input:
     list_columns = df.columns.to_list()
     tuple_columns = tuple(col for col in list_columns)
 
-    genre = st.radio(
-        "What's your interest group ( reccomend 'Intents' ) ",
-        tuple_columns)
+    with st.container():
+        col1, col2 = st.columns(2)
+
+        genre = col1.radio(
+            "What's your interest group ( reccomend 'Intents' ) ",
+            tuple_columns)
 
 
-    list_visuailize_df = np.append(df[genre].unique(), 'All Category')
-    tuple_visualize_columns = tuple(list_visuailize_df)
+        list_visuailize_df = np.append(df[genre].unique(), 'All Category')
+        tuple_visualize_columns = tuple(list_visuailize_df)
 
-    full_table = st.radio(
-        "What's your intrest dataframe ",
-        tuple_visualize_columns)
+        full_table = col2.radio(
+            "What's your intrest dataframe ",
+            tuple_visualize_columns)
 
-    if full_table=='All Category':
-        st.write(df)
-    else:
-        st.write('The Dataframe')
-        st.write(df[df[genre]==full_table])
+        if full_table=='All Category':
+            st.dataframe(df)
+        else:
+            st.write('The Dataframe')
+            st.dataframe(df[df[genre]==full_table])
+
+    with st.container():
+        col3, col4 = st.columns(2)
+        col3.subheader('Bar Chart Visualization')
+        col3.info(f'this bar is showing according to the genre: {genre} ')
+        df_ratio = df.groupby(genre).count()
+        col3.write(df_ratio)
+        col3.bar_chart(df_ratio)
 
 
-    st.subheader('Bar Chart Visualization')
-    st.write('this bar is showing according to the genre: ', genre)
-    df_ratio = df.groupby(genre).count()
-    st.write(df_ratio)
-    st.bar_chart(df_ratio)
-
-
-    st.subheader("Word Cloud Chart")
-    plt.show()
-    st.pyplot(plt)
+        col4.subheader("Word Cloud Chart")
+        plt.show()
+        col4.pyplot(plt)
 else:
     st.subheader('Enter Your Input')
     st.warning('👈 Avaiting your input !!!')
