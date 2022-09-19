@@ -14,4 +14,4 @@ RUN git clone https://github.com/Paopasatiht/streamlit_101.git .
 
 RUN pip3 install -r requirements.txt
 
-ENTRYPOINT ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+ENTRYPOINT ["streamlit", "run", "Chatbot\ Intelligent\ Dashboard.py", "--server.port=8501", "--server.address=0.0.0.0"]
