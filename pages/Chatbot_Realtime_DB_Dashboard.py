@@ -28,7 +28,7 @@ def query_crate():
 
 
 
-st.title('🎈 Super AI Chatbot Dashboard')
+st.title('🎈 Chatbot Realtime Database Dashboard')
 
 st.sidebar.subheader('Input')
 url_input = st.sidebar.text_input('Select URL', 'https://raw.githubusercontent.com/Paopasatiht/iarepus-chat-bot/main/data_corpus.csv')
@@ -36,9 +36,14 @@ url_input = st.sidebar.text_input('Select URL', 'https://raw.githubusercontent.c
 if url_input=='https://raw.githubusercontent.com/Paopasatiht/iarepus-chat-bot/main/data_corpus.csv':
     try: 
         df = query_crate()
+        st.subheader('Output')
+        st.info(f'The dataframe that you want to see is : from the CrateDB ')
     except:
         st.warning('The Query Doesn\'t work ')
         df = pd.read_csv('https://raw.githubusercontent.com/Paopasatiht/iarepus-chat-bot/main/data_corpus.csv')
+
+        st.subheader('Output')
+        st.info(f'The dataframe that you want to see is : {url_input} ')
 
     word_list = df.Question.to_list()
 
@@ -52,7 +57,7 @@ if url_input=='https://raw.githubusercontent.com/Paopasatiht/iarepus-chat-bot/ma
     stopwords=set(list(stopwords)).union({'นี้', 'อัน', 'แต่', 'ไม่'})
 
     wordcloud = WordCloud(
-        font_path='./THSarabunNew.ttf',
+        font_path='./assets/fonts/THSarabunNew.ttf',
         regexp='[ก-๙]+',
 
         stopwords=stopwords,
@@ -72,10 +77,7 @@ if url_input=='https://raw.githubusercontent.com/Paopasatiht/iarepus-chat-bot/ma
     plt.tight_layout(pad=0)
 
 if url_input:
-    st.subheader('Output')
-    st.info(f'The dataframe that you want to see is : {url_input} ')
-
-    df = pd.read_csv(url_input)
+    # df = pd.read_csv(url_input)
     list_columns = df.columns.to_list()
     tuple_columns = tuple(col for col in list_columns)
 

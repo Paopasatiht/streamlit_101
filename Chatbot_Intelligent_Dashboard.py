@@ -9,7 +9,7 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import re
 
-st.title('🎈 Super AI Chatbot Dashboard')
+st.title('🎈 Chatbot\'s Intelligent Dashboard')
 
 st.sidebar.subheader('Input')
 url_input = st.sidebar.text_input('Select URL', 'https://raw.githubusercontent.com/Paopasatiht/iarepus-chat-bot/main/data_corpus.csv')
@@ -29,7 +29,7 @@ if url_input=='https://raw.githubusercontent.com/Paopasatiht/iarepus-chat-bot/ma
     stopwords=set(list(stopwords)).union({'นี้', 'อัน', 'แต่', 'ไม่'})
 
     wordcloud = WordCloud(
-        font_path='./THSarabunNew.ttf',
+        font_path='./assets/fonts/THSarabunNew.ttf',
         regexp='[ก-๙]+',
 
         stopwords=stopwords,
