@@ -9,21 +9,25 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import re
 from crate import client
+import datetime
 
+def convert_milli_to_datetime(time_in_millis):
+    dt = datetime.datetime.fromtimestamp(time_in_millis / 1000.0, tz=datetime.timezone.utc)
+    return dt
 
 def query_crate():
-    crate_client = client.connect("localhost:4200")
+    crate_client = client.connect("http://110.78.211.35:4200/", timeout = 3)
     cursor = crate_client.cursor()
 
-    # query the data
     query_string = """
-    SELECT timestamp, question, answer, status
-    FROM "doc"."demotestbot2"
-    ORDER BY timestamp DESC
+    SELECT timestamp, intents, question, answer, probability, status
+    FROM "doc"."demo"
+    LIMIT 100;
     """
     cursor.execute(query_string)
     data = cursor.fetchall()
-    df = pd.DataFrame(data, columns=['time', 'question', 'answer'])
+    df = pd.DataFrame(data, columns=['time', 'intent', 'question', 'answer'
+                                    ,'probability','status'])
     return df
 
 
@@ -31,9 +35,9 @@ def query_crate():
 st.title('🎈 Chatbot Realtime Database Dashboard')
 
 st.sidebar.subheader('Input')
-url_input = st.sidebar.text_input('Select URL', 'https://raw.githubusercontent.com/Paopasatiht/iarepus-chat-bot/main/data_corpus.csv')
+url_input = st.sidebar.text_input('Select URL', 'https://raw.githubusercontent.com/Paopasatiht/iarepus-chat-bot/main/configs/data_corpus_v2.csv')
 # intent_input = st.sidebar.text_input('Select Type of Sentence', 'ทักทาย')
-if url_input=='https://raw.githubusercontent.com/Paopasatiht/iarepus-chat-bot/main/data_corpus.csv':
+if url_input=='https://raw.githubusercontent.com/Paopasatiht/iarepus-chat-bot/main/configs/data_corpus_v2.csv':
     try: 
         df = query_crate()
         st.subheader('Output')
@@ -45,7 +49,7 @@ if url_input=='https://raw.githubusercontent.com/Paopasatiht/iarepus-chat-bot/ma
         st.subheader('Output')
         st.info(f'The dataframe that you want to see is : {url_input} ')
 
-    word_list = df.Question.to_list()
+    word_list = df.question.to_list()
 
     s = " ".join(word_list)
 
@@ -76,9 +80,20 @@ if url_input=='https://raw.githubusercontent.com/Paopasatiht/iarepus-chat-bot/ma
     plt.axis('off')
     plt.tight_layout(pad=0)
 
+
+@st.cache
+def convert_df(df):
+   return df.to_csv().encode('utf-8')
+
+
 if url_input:
     # df = pd.read_csv(url_input)
-    list_columns = df.columns.to_list()
+    # preprocess
+    df.time = df.time.apply(lambda x: convert_milli_to_datetime(x))
+    list_columns = ['status', 'time', 'intent', 'question', 'answer'
+                    ,'probability']
+
+
     tuple_columns = tuple(col for col in list_columns)
 
     with st.container():
@@ -98,9 +113,25 @@ if url_input:
 
         if full_table=='All Category':
             st.dataframe(df)
+
+            csv = convert_df(df)
+            st.download_button(
+            label="Press to Download",
+            data=csv,
+            file_name="all_data.csv",
+            mime="text/csv",
+            )
         else:
             st.write('The Dataframe')
-            st.dataframe(df[df[genre]==full_table])
+            filter_df = df[df[genre]==full_table]
+            st.dataframe(filter_df)
+            csv = convert_df(filter_df)
+            st.download_button(
+            label="Press to Download",
+            data=csv,
+            file_name="filter_data.csv",
+            mime="text/csv",
+            )
 
     with st.container():
         col3, col4 = st.columns(2)

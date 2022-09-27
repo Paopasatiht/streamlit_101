@@ -11,13 +11,15 @@ import re
 
 st.title('🎈 Chatbot\'s Intelligent Dashboard')
 
+
+
 st.sidebar.subheader('Input')
-url_input = st.sidebar.text_input('Select URL', 'https://raw.githubusercontent.com/Paopasatiht/iarepus-chat-bot/main/data_corpus.csv')
+url_input = st.sidebar.text_input('Select URL', 'https://raw.githubusercontent.com/Paopasatiht/iarepus-chat-bot/main/configs/data_corpus_v2.csv')
 # intent_input = st.sidebar.text_input('Select Type of Sentence', 'ทักทาย')
-if url_input=='https://raw.githubusercontent.com/Paopasatiht/iarepus-chat-bot/main/data_corpus.csv':
+if url_input=='https://raw.githubusercontent.com/Paopasatiht/iarepus-chat-bot/main/configs/data_corpus_v2.csv':
     df = pd.read_csv(url_input)
 
-    word_list = df.Question.to_list()
+    word_list = df.Keys.to_list()
 
     s = " ".join(word_list)
 
